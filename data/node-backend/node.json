@@ -1,0 +1,13 @@
+{
+  "id": "clsbwcl8x0042vixgahbhd377",
+  "userId": null,
+  "name": "New node",
+  "totpId": "clsbwcl8r0040vixgszlj9sba",
+  "totp": {
+    "id": "clsbwcl8r0040vixgszlj9sba",
+    "algorithm": "SHA256",
+    "interval": 30,
+    "secret": "89cebc30d3aaa3e6082e4427526c92c8abc95e66e729aa68f5e5f27fc70e93d6",
+    "digits": 8
+  }
+}

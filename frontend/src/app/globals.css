@@ -1,0 +1,42 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+    --foreground-1: #000;
+    --foreground-2: #222;
+    --background-1: #eee;
+    --background-2: #fff;
+    --accent-1: #89ff97;
+    --border-1: #0004;
+}
+
+@media (prefers-color-scheme: dark) {
+    :root {
+        --foreground-1: #fff;
+        --foreground-2: #ddd;
+        --background-1: #222;
+        --background-2: #000;
+        --accent-1: #196b1b;
+        --border-1: #fff4;
+    }
+}
+
+body {
+    color: var(--foreground-1);
+    background: var(--background-1);
+}
+
+@layer utilities {
+    .text-balance {
+        text-wrap: balance;
+    }
+}
+
+h1 {
+    @apply text-2xl font-[600]
+}
+
+h2 {
+    @apply text-xl font-[600]
+}

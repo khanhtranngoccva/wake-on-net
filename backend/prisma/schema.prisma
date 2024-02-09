@@ -1,0 +1,66 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id             String  @id @default(cuid())
+  displayName           String
+  email          String  @unique
+  profilePicture String? @unique
+  nodes          Node[]
+}
+
+model Session {
+  id        String   @id
+  sid       String   @unique
+  data      String
+  expiresAt DateTime
+}
+
+model Node {
+  id      String   @id @default(cuid())
+  userId  String?
+  user    User?     @relation(fields: [userId], references: [id])
+  name    String
+  totpId  String   @unique
+  totp    Totp     @relation(fields: [totpId], references: [id])
+  devices Device[]
+}
+
+enum TotpHashAlgorithm {
+  SHA1
+  SHA224
+  SHA256
+  SHA384
+  SHA512
+  SHA3224
+  SHA3256
+  SHA3384
+  SHA3512
+}
+
+model Totp {
+  id        String            @id @default(cuid())
+  algorithm TotpHashAlgorithm @default(SHA256)
+  interval  Int               @default(30)
+  secret    String
+  digits    Int
+  node      Node?
+}
+
+model Device {
+  id         String @id @default(cuid())
+  name       String
+  nodeId     String
+  node       Node   @relation(fields: [nodeId], references: [id])
+  ipAddress  String
+  macAddress String
+}
