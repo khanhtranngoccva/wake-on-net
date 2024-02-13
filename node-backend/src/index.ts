@@ -7,7 +7,7 @@ import setupRouter from "@/routes/index.ts";
 import * as console from "console";
 import * as http from "http";
 
-// Express HTTP routes.
+// Express HTTP logic.
 app.use("/setup", setupRouter);
 enableErrorHandling(app);
 const server = http.createServer(app);

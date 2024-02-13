@@ -1,14 +1,20 @@
 import express from "express";
 import {createTotp, verifyTotpOrThrow} from "@/domains/totp/logic.ts";
-import * as logic from "@/domains/node/logic.ts";
-import {getNodeOnlineStatus, getUserNodes, loginNode} from "@/domains/node/logic.ts";
+import * as logic from "@/domains/node/model.ts";
+import {
+  getNodeOnlineStatus,
+  getUserNodes,
+  loginNode,
+  updateDeviceList,
+  verifyNodeOwnerOrThrow
+} from "@/domains/node/model.ts";
 import {z} from "zod";
 import {requireUserAuthenticationState} from "@/middleware/authenticate.ts";
-import {BadRequestError, InvalidCredentialsError, ResourceUnboundError} from "@/helpers/errors.ts";
+import {BadRequestError, ResourceUnboundError} from "@/helpers/errors.ts";
 import {getNodeRoom, getUserRoom} from "@/helpers/websocket-rooms.ts";
 import {WebsocketResponse} from "@/middleware/websocket.js";
-import console from "console";
-import io from "@/config/server/websocket.js";
+import {emitNodeAdd, emitNodeDelete, emitNodeStatuses, emitNodeUpdate} from "@/domains/node/events.js";
+import {emitDeviceAdd} from "@/domains/device/events.js";
 
 class HTTPController {
   static async registerNode(req: express.Request, res: express.Response) {
@@ -32,6 +38,7 @@ class HTTPController {
     otp: string,
     id: string,
   }>, res: express.Response) {
+    // Log in process.
     const user = req.user;
     const nodeId = z.string().cuid().parse(req.body.id);
     const inputOtp = z.string().parse(req.body.totp);
@@ -40,8 +47,43 @@ class HTTPController {
       throw new BadRequestError("This node has already been added to an account.");
     }
     await verifyTotpOrThrow(inputOtp, node.totp);
-    await loginNode(user, node);
-    res.jsonSuccess(node);
+    const loggedInNode = await loginNode(user, node);
+
+    // Extended query so that the imported node's devices can be updated in real-time.
+    const fullNode = await logic.getNodeWithDevices(nodeId);
+    emitNodeAdd(req.user, loggedInNode);
+    for (let importedDevice of fullNode.devices) {
+      emitDeviceAdd(req.user, importedDevice);
+    }
+    res.jsonSuccess(loggedInNode);
+  }
+
+  @requireUserAuthenticationState(true)
+  static async patchNode(req: express.Request<{
+    id: string;
+  }, {
+    name?: string
+  }>, res: express.Response) {
+    const nodeId = z.string().cuid().parse(req.params.id);
+    const node = await logic.getNode(nodeId);
+    await verifyNodeOwnerOrThrow(req.user, node);
+    const newNode = await logic.patchNode(node, {
+      name: z.string().optional().parse(req.body.name)
+    });
+    emitNodeUpdate(req.user, newNode);
+    res.jsonSuccess(newNode);
+  }
+
+  @requireUserAuthenticationState(true)
+  static async deleteNode(req: express.Request<{
+    id: string;
+  }>, res: express.Response) {
+    const nodeId = z.string().cuid().parse(req.params.id);
+    const node = await logic.getNode(nodeId);
+    await verifyNodeOwnerOrThrow(req.user, node);
+    await logic.deleteNode(node);
+    emitNodeDelete(req.user, nodeId);
+    res.jsonSuccess();
   }
 
   static async getCurrentNode(req: express.Request, res: express.Response) {
@@ -64,8 +106,7 @@ class WebsocketController {
       node = await logic.getNode(nodeId);
       await verifyTotpOrThrow(inputTotp, node.totp);
     } catch (e) {
-      console.error(e);
-      return next(new InvalidCredentialsError("Invalid login credentials"));
+      return next(e);
     }
     if (!node.userId) {
       return next(new ResourceUnboundError("This node must be bound to an user first!"));
@@ -81,8 +122,10 @@ class WebsocketController {
   }
 
   static async handleNodeWSJoin(socket: Application.NodeWS) {
+    // Update the node's lists.
+    await updateDeviceList(socket.data.node);
     // Inform the user's web clients that the node is online.
-    io.of("/web").to(getUserRoom(socket.data.node.userId)).emit("node:online_status", [{
+    emitNodeStatuses(socket.data.node.userId, [{
       id: socket.data.node.id,
       online: true,
     }]);
@@ -91,7 +134,7 @@ class WebsocketController {
   static async handleNodeWSLeave(socket: Application.NodeWS) {
     const online = await getNodeOnlineStatus(socket.data.node);
     // Inform the user's web clients that the node is offline.
-    io.of("/web").to(getUserRoom(socket.data.node.userId)).emit("node:online_status", [{
+    emitNodeStatuses(socket.data.node.userId, [{
       id: socket.data.node.id,
       online: online,
     }]);
@@ -112,13 +155,13 @@ class WebsocketController {
 
   static async requestAllNodeStatus(socket: Application.WebWS) {
     const nodes = await getUserNodes(socket.request.user, {});
-    const onlineStatus = await Promise.all(nodes.map(async node => {
+    const onlineStatuses = await Promise.all(nodes.map(async node => {
       return {
         id: node.id,
         online: await getNodeOnlineStatus(node),
       };
     }));
-    io.of("/web").to(getUserRoom(socket.request.user)).emit("node:online_status", onlineStatus);
+    emitNodeStatuses(socket.request.user, onlineStatuses);
   }
 }
 

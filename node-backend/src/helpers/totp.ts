@@ -4,7 +4,7 @@ import crypto from "crypto";
 import console from "console";
 
 type TotpGenerationAlgorithm = Parameters<typeof TOTP.generate>[1]["algorithm"]
-const algorithmTranslation: Record<Application.TotpConfig["algorithm"], TotpGenerationAlgorithm> = {
+const algorithmTranslation: Record<Application.Totp["algorithm"], TotpGenerationAlgorithm> = {
   SHA1: "SHA-1",
   SHA224: "SHA-224",
   SHA256: "SHA-256",
@@ -15,7 +15,7 @@ const algorithmTranslation: Record<Application.TotpConfig["algorithm"], TotpGene
   SHA3384: "SHA3-384",
   SHA3512: "SHA3-512",
 };
-type TotpGenerationParams = Application.TotpConfig & {
+type TotpGenerationParams = Application.Totp & {
   timestamp: number,
 }
 

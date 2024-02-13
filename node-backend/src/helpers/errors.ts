@@ -2,9 +2,10 @@ class SystemError extends Error {
 }
 
 export interface SocketIOError extends Error {
-  data: {
+  data?: {
     type: string;
   }
+  type: string;
 }
 
 export class CustomError extends Error {

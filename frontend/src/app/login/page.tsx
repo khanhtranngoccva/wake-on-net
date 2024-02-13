@@ -8,7 +8,7 @@ const LINKS = [
   {
     desc: "Sign in with Google",
     icon: FaGoogle,
-    href: new URL("/web/auth/google", process.env.NEXT_PUBLIC_BACKEND_URL).toString(),
+    href: new URL("/web/auth/google", process.env.NEXT_PUBLIC_BACKEND_HTTP_URL).toString(),
   },
 ];
 

@@ -11,6 +11,8 @@ async function load(): Promise<Application.NodeConfig> {
   const data = JSON.parse((await fs.promises.readFile(NODE_CONFIG_PATH)).toString());
   return {
     id: z.string().cuid().parse(data.id),
+    name: z.string().parse(data.name),
+    totpId: z.string().parse(data.totpId),
     userId: z.string().nullable().parse(data.userId),
     totp: {
       id: z.string().cuid().parse(data.totp.id),

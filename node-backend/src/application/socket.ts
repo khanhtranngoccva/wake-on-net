@@ -5,6 +5,7 @@ import * as console from "console";
 import {SocketIOError} from "@/helpers/errors.js";
 import {delay} from "@/helpers/timing.js";
 import {regenerateConfig} from "@/application/configuration.js";
+import {routes} from "@/application/routes.js";
 
 const WEBSOCKET_NODE_API_URL = new URL("/node", envHelper.get("BACKEND_WS_URL")).toString();
 
@@ -17,20 +18,11 @@ class NodeSocket {
   #invalidCredentialsTimes = 0;
 
   constructor(params: Application.NodeConfig) {
-    const clonedParams = structuredClone(params);
-    this.#params = clonedParams;
-    const totpCode = generateTotp({
-      ...clonedParams.totp,
-      timestamp: Math.floor(Date.now()),
-    }).otp;
+    this.#params = structuredClone(params);
     this.#socket = io(WEBSOCKET_NODE_API_URL, {
       transports: ["websocket"],
-      auth: {
-        nodeId: clonedParams.id,
-        totp: totpCode,
-      }
+      autoConnect: false,
     });
-    this.#socket.connect();
     this.#socket.on("connect_error", (e: SocketIOError) => {
       if (e.data?.type === "ResourceUnboundError") {
         // Tries to reconnect to the server with a delay, then dump results.
@@ -39,37 +31,60 @@ class NodeSocket {
       } else if (e.data?.type === "InvalidCredentialsError") {
         // In case of clock drift, the system needs to retry a few times.
         this.#invalidCredentialsTimes++;
-        if (this.#invalidCredentialsTimes >= 3) {
-          regenerateConfig().then();
-          this.disconnect();
-          console.error("The system failed to authenticate you 3 times.");
-          console.error("It is possible that this node has been deleted. We have regenerated another configuration for your convenience.");
-          console.error("In case the node remains intact on our servers, go to your dashboard and click on the restore button next to your node entry.");
+        if (this.#invalidCredentialsTimes >= 20) {
+          this.#regenerateConfig().then();
         } else {
           this.#reconnect().then();
         }
+      } else if (e.type === "TransportError") {
+        console.log("Connection cannot be established. Retrying...");
+        this.#reconnect().then();
       } else {
-        throw e;
+        console.error(e);
       }
     });
     this.#socket.on("connect", () => {
+      console.log("Connected!");
+      this.#invalidCredentialsTimes = 0;
       this.#connectSuccess = true;
     });
     this.#socket.on("disconnect", async () => {
       await this.#reconnect();
     });
+    routes(this.#socket).then();
+    this.connect();
   }
 
   async #reconnect() {
-    await delay(5);
     if (!this.#disconnected) {
-      this.#socket.connect();
+      await delay(5);
+      this.connect();
     }
   }
 
+  connect() {
+    if (this.#disconnected) return;
+    const totpCode = generateTotp({
+      ...this.#params.totp,
+      timestamp: Math.floor(Date.now()),
+    }).otp;
+    this.#socket.auth = {
+      nodeId: this.#params.id,
+      totp: totpCode
+    }
+    this.#socket.connect();
+  }
+
   disconnect() {
-    socket.disconnect();
+    this.#socket.disconnect();
     this.#disconnected = true;
+  }
+
+  async #regenerateConfig() {
+    this.disconnect();
+    await regenerateConfig();
+    console.error("The system failed to authenticate this node multiple times.");
+    console.error("It is possible that this node has been deleted. We have regenerated a new configuration for your convenience.");
   }
 
   async dumpAuthenticationParams() {

@@ -14,7 +14,13 @@ export default function enableErrorHandling(app: express.Express) {
         }
       });
     } else if (err instanceof ZodError) {
-
+      res.status(400).json({
+        success: false,
+        error: {
+          type: err.constructor.name,
+          message: err.message,
+        }
+      });
     } else {
       // Forward the error to the log management software
       console.error(err);

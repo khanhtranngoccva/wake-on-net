@@ -10,18 +10,14 @@ declare global {
     interface Node {
       id: string;
       userId: string | null;
-      user?: User | null;
       name: string;
       totpId: string | null;
-      totp?: Totp | null;
-      devices?: Device[];
     }
 
     interface Device {
       id: string;
       name: string;
       nodeId: string;
-      node?: Node;
       ipAddress: string;
       macAddress: string;
     }
@@ -35,7 +31,7 @@ declare global {
       online: boolean;
     }
 
-    interface NodeOnlineStatus extends OnlineStatus {}
+    interface NodeStatus extends OnlineStatus {}
   }
 
   namespace Api {

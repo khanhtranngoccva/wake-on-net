@@ -20,7 +20,7 @@ function ModularForm(props: ModularFormProps) {
         <IconButton icon={FaXmark} className={"flex-none opacity-0 pointer-events-none aspect-square"}></IconButton>
         <h2 className={"flex-1 text-center"}>{props.heading}</h2>
         <IconButton icon={FaXmark} onClick={(e) => {
-          router.push("..");
+          router.back();
         }} className={"flex-none aspect-square"}></IconButton>
       </div>
       <form {...delegated} className={`flex flex-col gap-2 flex-1 ${props.className || ""}`}>

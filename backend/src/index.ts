@@ -11,12 +11,12 @@ import console from "console";
 import websocketNodeRoutes from "@/routes/websocket/node.js";
 import websocketWebRoutes from "@/routes/websocket/web.js";
 
-// Express HTTP routes.
+// Express HTTP logic.
 app.use("/web", webRouter);
 app.use("/node", nodeRouter);
 enableErrorHandling(app);
 
-// Websocket routes.
+// Websocket logic.
 enableWebsocketErrorHandling(io);
 websocketNodeRoutes(io);
 websocketWebRoutes(io);

@@ -2,10 +2,10 @@ declare global {
   namespace Application {
     interface AuthenticationData {
       nodeId: string;
-      totp: TotpConfig;
+      totp: Totp;
     }
 
-    interface TotpConfig {
+    interface Totp {
       id: string;
       algorithm: string;
       interval: number;
@@ -13,10 +13,30 @@ declare global {
       digits: number;
     }
 
-    interface NodeConfig {
+    interface User {
       id: string;
-      totp: TotpConfig;
-      userId: string|null;
+      email: string;
+      displayName: string;
+      profilePicture: string;
+    }
+
+    interface Node {
+      id: string;
+      userId: string | null;
+      name: string;
+      totpId: string | null;
+    }
+
+    interface NodeConfig extends Node {
+      totp: Totp;
+    }
+
+    interface Device {
+      id: string;
+      name: string;
+      nodeId: string;
+      ipAddress: string;
+      macAddress: string;
     }
   }
 

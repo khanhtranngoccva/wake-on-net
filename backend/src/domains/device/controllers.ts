@@ -1,13 +1,14 @@
 import {requireUserAuthenticationState} from "@/middleware/authenticate.ts";
-import * as logic from "./logic.ts";
-import {updateDeviceList, verifyNodeOwnerOrThrow} from "@/domains/node/logic.ts";
+import * as logic from "./model.ts";
+import {updateDeviceList, verifyNodeOwnerOrThrow} from "@/domains/node/model.ts";
 import express from "express";
 import {z} from "zod";
-import {verifyDeviceOwnerOrThrow, wakeDevice} from "./logic.ts";
 import {getUserRoom} from "@/helpers/websocket-rooms.ts";
 import {WebsocketResponse} from "@/middleware/websocket.js";
+import {emitDeviceAdd, emitDeviceDelete, emitDeviceStatus, emitDeviceUpdate} from "@/domains/device/events.js";
+import {verifyDeviceOwnerOrThrow, wakeDevice} from "./model.ts";
 
-export default class DeviceController {
+class HTTPController {
   @requireUserAuthenticationState(true)
   static async createDevice(req: express.Request<any, {
     nodeId: string,
@@ -23,24 +24,77 @@ export default class DeviceController {
       ipAddress: z.string().regex(/^((25[0-5]|(2[0-4]|1\d|[1-9]|)\d)\.?\b){4}$/).parse(req.body.ipAddress),
     });
     await updateDeviceList(nodeId);
+    emitDeviceAdd(req.user, device);
     res.jsonSuccess(device);
   }
 
   @requireUserAuthenticationState(true)
-  static async wakeDevice(req: express.Request<any, {
-    deviceId: string,
+  static async patchDevice(req: express.Request<{
+    id: string;
+  }, {
+    name?: string,
+    ipAddress?: string,
+    macAddress?: string,
   }>, res: express.Response) {
-    const deviceId = z.string().cuid().parse(req.body.deviceId);
+    const deviceId = z.string().cuid().parse(req.params.id);
+    await verifyDeviceOwnerOrThrow(req.user, deviceId);
+    const device = await logic.patchDevice(deviceId, {
+      name: z.string().optional().parse(req.body.name),
+      macAddress: z.string().regex(/^([0-9A-Fa-f]{2}[:-]){5}([0-9A-Fa-f]{2})$/).optional().parse(req.body.macAddress),
+      ipAddress: z.string().regex(/^((25[0-5]|(2[0-4]|1\d|[1-9]|)\d)\.?\b){4}$/).optional().parse(req.body.ipAddress),
+    });
+    await updateDeviceList(device.nodeId);
+    emitDeviceUpdate(req.user, device);
+    res.jsonSuccess(device);
+  }
+
+  @requireUserAuthenticationState(true)
+  static async deleteDevice(req: express.Request<{
+    id: string;
+  }, {}>, res: express.Response) {
+    const deviceId = z.string().cuid().parse(req.params.id);
+    const device = await logic.getDevice(deviceId);
+    await verifyDeviceOwnerOrThrow(req.user, device);
+    await logic.deleteDevice(deviceId);
+    await updateDeviceList(device.nodeId);
+    emitDeviceDelete(req.user, device.id);
+    res.jsonSuccess();
+  }
+
+  @requireUserAuthenticationState(true)
+  static async getDevice(req: express.Request<{
+    id: string;
+  }, {}>, res: express.Response) {
+    const deviceId = z.string().cuid().parse(req.params.id);
+    const device = await logic.getDevice(deviceId);
+    await verifyDeviceOwnerOrThrow(req.user, device);
+    res.jsonSuccess(device);
+  }
+
+  @requireUserAuthenticationState(true)
+  static async wakeDevice(req: express.Request<{
+    id: string
+  }>, res: express.Response) {
+    const deviceId = z.string().cuid().parse(req.params.id);
     const device = await logic.getDevice(deviceId);
     await verifyDeviceOwnerOrThrow(req.user, device);
     await wakeDevice(device);
   }
+}
 
+class WebsocketController {
   static async receiveDevicePing(socket: Application.NodeWS, response: WebsocketResponse<void>, parameters: {
-    deviceId: string,
-    success: boolean,
-    delay: number,
+    id: string,
+    online: boolean,
   }) {
-    socket.to(getUserRoom(socket.data.node.userId)).emit("device:ping", parameters);
+    emitDeviceStatus(socket.data.node.userId, {
+      id: z.string().cuid().parse(parameters.id),
+      online: z.boolean().parse(parameters.online),
+    });
   }
+}
+
+export default class DeviceController {
+  static http = HTTPController;
+  static websocket = WebsocketController;
 }

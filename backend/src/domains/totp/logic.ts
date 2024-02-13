@@ -4,6 +4,8 @@ import {TOTP} from "totp-generator";
 import {InvalidCredentialsError} from "@/helpers/errors.ts";
 import base32Encode from "base32-encode";
 import console from "console";
+import {string} from "zod";
+import server from "@/config/server/http.js";
 
 export async function createTotp() {
   return prisma.totp.create({
@@ -11,7 +13,7 @@ export async function createTotp() {
       digits: 8,
       secret: crypto.randomBytes(32).toString("hex"),
       algorithm: "SHA256",
-      interval: 30,
+      interval: 60,
     }
   });
 }
@@ -43,6 +45,7 @@ export async function verifyTotp(input: string, totpConfigOrId: Prisma.Totp | st
   } else {
     totpConfig = totpConfigOrId;
   }
+  const totpDebug = [];
   let originalTime = Date.now();
   for (let i = 0; i < 2; i++) {
     let timestamp = originalTime - totpConfig.interval * i * 1000;
@@ -51,6 +54,10 @@ export async function verifyTotp(input: string, totpConfigOrId: Prisma.Totp | st
       timestamp: timestamp
     };
     let serverTotp = generateTotp(totpGenerationParams).otp;
+    totpDebug.push({
+      timestamp: new Date(timestamp),
+      otp: serverTotp
+    });
     if (serverTotp === input) {
       return true;
     }

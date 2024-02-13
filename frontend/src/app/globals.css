@@ -40,3 +40,7 @@ h1 {
 h2 {
     @apply text-xl font-[600]
 }
+
+h3 {
+    @apply text-lg font-[600]
+}

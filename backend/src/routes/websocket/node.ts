@@ -12,7 +12,7 @@ export default function websocketNodeRoutes(io: Server) {
     const wrapper = createWSControllerWrapper(socket);
     await NodeController.websocket.nodeWSJoinRooms(socket);
     await NodeController.websocket.handleNodeWSJoin(socket);
-    socket.on("device:ping", wrapper(DeviceController.receiveDevicePing));
+    socket.on("device:ping", wrapper(DeviceController.websocket.receiveDevicePing));
     socket.on("disconnect", () => {
       NodeController.websocket.handleNodeWSLeave(socket);
     });
