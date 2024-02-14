@@ -61,21 +61,7 @@ type WebsocketController<ResponseType = any> = (
   response: WebsocketResponse<ResponseType>,
   ...args: any[]) => ResponseType | Promise<ResponseType>;
 
-
-// Middleware error handling.
-export default function enableWebsocketErrorHandling(server: Server) {
-  server.use(async (socket, next: (err?: Error) => void | Promise<void>) => {
-    try {
-      await next();
-    } catch (e) {
-      if (e instanceof CustomError) {
-        next(e);
-      } else {
-        next(new Error("Unspecified Websocket server error."));
-      }
-    }
-  });
-}
+type WebsocketMiddleware = (socket: Socket, next: (error?: Error) => void | Promise<void>) => void | Promise<void>
 
 export const wrapExpressMiddleware = (middleware: ExpressController) => {
   return (socket: Socket, next: () => void) => {
@@ -85,6 +71,36 @@ export const wrapExpressMiddleware = (middleware: ExpressController) => {
       console.error(e);
     }
   }
+}
+
+export function createWSMiddlewareWrapper(middleware: WebsocketMiddleware) {
+  const out: WebsocketMiddleware = async (socket, next) => {
+    try {
+      await new Promise<void>(async (resolve, reject) => {
+        // reject via next(err) or resolve via next() or implicit resolve
+        try {
+          await middleware(socket, (e) => {
+            if (e) reject(e);
+            else resolve();
+          });
+          resolve();
+        }
+        // reject via throwing.
+        catch (e) {
+          reject(e);
+        }
+      })
+    } catch (e) {
+      if (e instanceof CustomError || e instanceof ZodError) {
+        next(e);
+      } else {
+        console.error(e);
+        next(new CustomError());
+      }
+    }
+  }
+
+  return out;
 }
 
 // Controller response and error handling.

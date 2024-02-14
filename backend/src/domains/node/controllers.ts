@@ -10,7 +10,7 @@ import {
 } from "@/domains/node/model.js";
 import {z} from "zod";
 import {requireUserAuthenticationState} from "@/middleware/authenticate.js";
-import {BadRequestError, ResourceUnboundError} from "@/helpers/errors.js";
+import {BadRequestError, CustomError, ResourceUnboundError} from "@/helpers/errors.js";
 import {getNodeRoom, getUserRoom} from "@/helpers/websocket-rooms.js";
 import {WebsocketResponse} from "@/middleware/websocket.js";
 import {emitNodeAdd, emitNodeDelete, emitNodeStatuses, emitNodeUpdate} from "@/domains/node/events.js";
@@ -100,14 +100,10 @@ class WebsocketController {
   static async authenticateNode(socket: Application.NodeWS, next: (err?: Error) => void) {
     const auth = socket.handshake.auth;
     let node: Awaited<ReturnType<typeof logic.getNode>>;
-    try {
-      let nodeId = z.string().cuid().parse(auth.nodeId);
-      let inputTotp = z.string().regex(/^[0-9]{6,10}$/).parse(auth.totp);
-      node = await logic.getNode(nodeId);
-      await verifyTotpOrThrow(inputTotp, node.totp);
-    } catch (e) {
-      return next(e);
-    }
+    let nodeId = z.string().cuid().parse(auth.nodeId);
+    let inputTotp = z.string().regex(/^[0-9]{6,10}$/).parse(auth.totp);
+    node = await logic.getNode(nodeId);
+    await verifyTotpOrThrow(inputTotp, node.totp);
     if (!node.userId) {
       return next(new ResourceUnboundError("This node must be bound to an user first!"));
     }

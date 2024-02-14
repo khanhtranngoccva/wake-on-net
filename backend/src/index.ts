@@ -5,7 +5,6 @@ import enableErrorHandling from "@/middleware/errors.js";
 import webRouter from "@/routes/http/web/index.js";
 import envHelper from "@/helpers/env-helper.js";
 import {z} from "zod";
-import enableWebsocketErrorHandling from "@/middleware/websocket.js";
 import nodeRouter from "@/routes/http/node/index.js";
 import console from "console";
 import websocketNodeRoutes from "@/routes/websocket/node.js";
@@ -17,7 +16,6 @@ app.use("/node", nodeRouter);
 enableErrorHandling(app);
 
 // Websocket logic.
-enableWebsocketErrorHandling(io);
 websocketNodeRoutes(io);
 websocketWebRoutes(io);
 
