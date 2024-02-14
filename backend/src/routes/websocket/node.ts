@@ -1,6 +1,6 @@
 import {Namespace, Server} from "socket.io";
-import NodeController from "@/domains/node/controllers.ts";
-import DeviceController from "@/domains/device/controllers.ts";
+import NodeController from "@/domains/node/controllers.js";
+import DeviceController from "@/domains/device/controllers.js";
 import {createWSControllerWrapper} from "@/middleware/websocket.js";
 
 export default function websocketNodeRoutes(io: Server) {

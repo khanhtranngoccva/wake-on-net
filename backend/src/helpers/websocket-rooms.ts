@@ -1,5 +1,5 @@
-import {Prisma} from "@/helpers/prisma.ts";
-import {getIdOfEntity} from "@/helpers/db-entity.ts";
+import {Prisma} from "@/helpers/prisma.js";
+import {getIdOfEntity} from "@/helpers/db-entity.js";
 
 export function getNodeRoom(nodeOrId: Prisma.Node | string) {
   return `node_${getIdOfEntity(nodeOrId)}`;

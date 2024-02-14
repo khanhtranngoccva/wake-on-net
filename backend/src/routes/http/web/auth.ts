@@ -1,7 +1,7 @@
 import express from "express";
 import passport from "passport";
-import envHelper from "@/helpers/env-helper.ts";
-import AuthController from "@/domains/auth/controllers.ts";
+import envHelper from "@/helpers/env-helper.js";
+import AuthController from "@/domains/auth/controllers.js";
 
 const webAuthRouter = express.Router();
 

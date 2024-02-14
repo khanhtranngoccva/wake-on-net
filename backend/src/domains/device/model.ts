@@ -1,8 +1,8 @@
-import prisma, {Prisma} from "@/helpers/prisma.ts";
-import {getIdOfEntity} from "@/helpers/db-entity.ts";
-import {AuthorizationError} from "@/helpers/errors.ts";
-import io from "@/config/server/websocket.ts";
-import {getNodeRoom} from "@/helpers/websocket-rooms.ts";
+import prisma, {Prisma} from "@/helpers/prisma.js";
+import {getIdOfEntity} from "@/helpers/db-entity.js";
+import {AuthorizationError} from "@/helpers/errors.js";
+import io from "@/config/server/websocket.js";
+import {getNodeRoom} from "@/helpers/websocket-rooms.js";
 import {emitDeviceWake} from "@/domains/device/events.js";
 
 export async function createDevice(nodeOrId: Prisma.Node | string, params: {

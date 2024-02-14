@@ -1,7 +1,7 @@
-import prisma, {Prisma} from "@/helpers/prisma.ts";
+import prisma, {Prisma} from "@/helpers/prisma.js";
 import * as crypto from "crypto";
 import {TOTP} from "totp-generator";
-import {InvalidCredentialsError} from "@/helpers/errors.ts";
+import {InvalidCredentialsError} from "@/helpers/errors.js";
 import base32Encode from "base32-encode";
 import console from "console";
 import {string} from "zod";

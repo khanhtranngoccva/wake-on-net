@@ -1,7 +1,7 @@
-import httpServer from "@/config/server/http.ts";
+import httpServer from "@/config/server/http.js";
 import {Server} from "socket.io";
 
-const io = new Server(httpServer, {
+const io: Server = new Server(httpServer, {
   transports: ["websocket"],
 });
 

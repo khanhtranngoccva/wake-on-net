@@ -1,17 +1,17 @@
 import express from "express";
-import {createTotp, verifyTotpOrThrow} from "@/domains/totp/logic.ts";
-import * as logic from "@/domains/node/model.ts";
+import {createTotp, verifyTotpOrThrow} from "@/domains/totp/logic.js";
+import * as logic from "@/domains/node/model.js";
 import {
   getNodeOnlineStatus,
   getUserNodes,
   loginNode,
   updateDeviceList,
   verifyNodeOwnerOrThrow
-} from "@/domains/node/model.ts";
+} from "@/domains/node/model.js";
 import {z} from "zod";
-import {requireUserAuthenticationState} from "@/middleware/authenticate.ts";
-import {BadRequestError, ResourceUnboundError} from "@/helpers/errors.ts";
-import {getNodeRoom, getUserRoom} from "@/helpers/websocket-rooms.ts";
+import {requireUserAuthenticationState} from "@/middleware/authenticate.js";
+import {BadRequestError, ResourceUnboundError} from "@/helpers/errors.js";
+import {getNodeRoom, getUserRoom} from "@/helpers/websocket-rooms.js";
 import {WebsocketResponse} from "@/middleware/websocket.js";
 import {emitNodeAdd, emitNodeDelete, emitNodeStatuses, emitNodeUpdate} from "@/domains/node/events.js";
 import {emitDeviceAdd} from "@/domains/device/events.js";

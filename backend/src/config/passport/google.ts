@@ -1,6 +1,6 @@
 import {GoogleCallbackParameters, Profile, Strategy, VerifyCallback} from "passport-google-oauth20";
-import envHelper from "@/helpers/env-helper.ts";
-import prisma from "@/helpers/prisma.ts";
+import envHelper from "@/helpers/env-helper.js";
+import prisma from "@/helpers/prisma.js";
 import * as process from "process";
 import * as console from "console";
 

@@ -1,5 +1,5 @@
 import express from "express";
-import {AlreadySignedInError, NoCredentialsError} from "@/helpers/errors.ts";
+import {AlreadySignedInError, NoCredentialsError} from "@/helpers/errors.js";
 
 type ExpressController = (req: express.Request, res: express.Response, next?: express.NextFunction) => any;
 

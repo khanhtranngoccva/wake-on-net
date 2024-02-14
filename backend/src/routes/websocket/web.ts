@@ -1,10 +1,8 @@
 import {Namespace, Server} from "socket.io";
-import NodeController from "@/domains/node/controllers.ts";
-import DeviceController from "@/domains/device/controllers.ts";
+import NodeController from "@/domains/node/controllers.js";
 import {enableWebsocketAuth} from "@/config/passport/index.js";
 import {AuthenticationError} from "@/helpers/errors.js";
 import {createWSControllerWrapper} from "@/middleware/websocket.js";
-import App from "@/config/server/app.js";
 
 export default function websocketWebRoutes(io: Server) {
   let namespace: Namespace;

@@ -1,6 +1,6 @@
 import express from "express";
 import * as console from "console";
-import {CustomError} from "@/helpers/errors.ts";
+import {CustomError} from "@/helpers/errors.js";
 import {ZodError} from "zod";
 
 export default function enableErrorHandling(app: express.Express) {

@@ -2,10 +2,10 @@ import express, {Express} from "express";
 import session from "express-session";
 import {z} from "zod";
 import {PrismaSessionStore} from "@quixo3/prisma-session-store";
-import prisma from "@/helpers/prisma.ts";
+import prisma from "@/helpers/prisma.js";
 import passport from "passport";
-import envHelper from "@/helpers/env-helper.ts";
-import google from "@/config/passport/google.ts";
+import envHelper from "@/helpers/env-helper.js";
+import google from "@/config/passport/google.js";
 import {wrapExpressMiddleware} from "@/middleware/websocket.js";
 import {Namespace, Server} from "socket.io";
 

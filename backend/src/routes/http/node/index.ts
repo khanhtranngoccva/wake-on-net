@@ -1,5 +1,5 @@
 import express from "express";
-import NodeController from "@/domains/node/controllers.ts";
+import NodeController from "@/domains/node/controllers.js";
 
 const nodeRouter = express.Router();
 

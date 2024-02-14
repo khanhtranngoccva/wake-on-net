@@ -1,12 +1,12 @@
-import {requireUserAuthenticationState} from "@/middleware/authenticate.ts";
-import * as logic from "./model.ts";
-import {updateDeviceList, verifyNodeOwnerOrThrow} from "@/domains/node/model.ts";
+import {requireUserAuthenticationState} from "@/middleware/authenticate.js";
+import * as logic from "./model.js";
+import {updateDeviceList, verifyNodeOwnerOrThrow} from "@/domains/node/model.js";
 import express from "express";
 import {z} from "zod";
-import {getUserRoom} from "@/helpers/websocket-rooms.ts";
+import {getUserRoom} from "@/helpers/websocket-rooms.js";
 import {WebsocketResponse} from "@/middleware/websocket.js";
 import {emitDeviceAdd, emitDeviceDelete, emitDeviceStatus, emitDeviceUpdate} from "@/domains/device/events.js";
-import {verifyDeviceOwnerOrThrow, wakeDevice} from "./model.ts";
+import {verifyDeviceOwnerOrThrow, wakeDevice} from "./model.js";
 
 class HTTPController {
   @requireUserAuthenticationState(true)

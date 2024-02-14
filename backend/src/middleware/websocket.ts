@@ -1,5 +1,5 @@
 import {Server, Socket} from "socket.io";
-import {CustomError} from "@/helpers/errors.ts";
+import {CustomError} from "@/helpers/errors.js";
 import express from "express";
 import console from "console";
 import {ZodError} from "zod";
