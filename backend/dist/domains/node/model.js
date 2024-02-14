@@ -1,8 +1,8 @@
-import prisma from "../../helpers/prisma.js";
-import { getIdOfEntity } from "../../helpers/db-entity.js";
-import { AuthorizationError } from "../../helpers/errors.js";
-import io from "../../config/server/websocket.js";
-import { getNodeRoom } from "../../helpers/websocket-rooms.js";
+import prisma from "@/helpers/prisma.js";
+import { getIdOfEntity } from "@/helpers/db-entity.js";
+import { AuthorizationError } from "@/helpers/errors.js";
+import io from "@/config/server/websocket.js";
+import { getNodeRoom } from "@/helpers/websocket-rooms.js";
 export async function registerNode(params) {
     return prisma.node.create({
         data: {

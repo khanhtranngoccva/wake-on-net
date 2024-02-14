@@ -1,6 +1,6 @@
-import NodeController from "../../domains/node/controllers.js";
-import DeviceController from "../../domains/device/controllers.js";
-import { createWSControllerWrapper } from "../../middleware/websocket.js";
+import NodeController from "@/domains/node/controllers.js";
+import DeviceController from "@/domains/device/controllers.js";
+import { createWSControllerWrapper } from "@/middleware/websocket.js";
 export default function websocketNodeRoutes(io) {
     let namespace;
     namespace = io.of("/node");

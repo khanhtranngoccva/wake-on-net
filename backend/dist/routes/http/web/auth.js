@@ -1,7 +1,7 @@
 import express from "express";
 import passport from "passport";
-import envHelper from "../../../helpers/env-helper.js";
-import AuthController from "../../../domains/auth/controllers.js";
+import envHelper from "@/helpers/env-helper.js";
+import AuthController from "@/domains/auth/controllers.js";
 const webAuthRouter = express.Router();
 webAuthRouter.get("/google", passport.authenticate("google"));
 webAuthRouter.get("/google/callback", passport.authenticate("google", {

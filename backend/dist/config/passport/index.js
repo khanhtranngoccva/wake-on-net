@@ -1,11 +1,11 @@
 import session from "express-session";
 import { z } from "zod";
 import { PrismaSessionStore } from "@quixo3/prisma-session-store";
-import prisma from "../../helpers/prisma.js";
+import prisma from "@/helpers/prisma.js";
 import passport from "passport";
-import envHelper from "../../helpers/env-helper.js";
-import google from "../../config/passport/google.js";
-import { wrapExpressMiddleware } from "../../middleware/websocket.js";
+import envHelper from "@/helpers/env-helper.js";
+import google from "@/config/passport/google.js";
+import { wrapExpressMiddleware } from "@/middleware/websocket.js";
 let secret = z.string().min(8).parse(envHelper.get("SESSION_SECRET"));
 let sessionMiddleware = session({
     saveUninitialized: false,

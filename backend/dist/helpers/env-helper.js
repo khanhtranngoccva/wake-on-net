@@ -1,6 +1,6 @@
 import dotenv from "dotenv";
 import * as process from "process";
-import { EnvironmentError } from "../helpers/errors.js";
+import { EnvironmentError } from "@/helpers/errors.js";
 class EnvHelper {
     constructor() {
         dotenv.config({

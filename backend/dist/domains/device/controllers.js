@@ -7,12 +7,12 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
-import { requireUserAuthenticationState } from "../../middleware/authenticate.js";
+import { requireUserAuthenticationState } from "@/middleware/authenticate.js";
 import * as logic from "./model.js";
-import { updateDeviceList, verifyNodeOwnerOrThrow } from "../../domains/node/model.js";
+import { updateDeviceList, verifyNodeOwnerOrThrow } from "@/domains/node/model.js";
 import express from "express";
 import { z } from "zod";
-import { emitDeviceAdd, emitDeviceDelete, emitDeviceStatus, emitDeviceUpdate } from "../../domains/device/events.js";
+import { emitDeviceAdd, emitDeviceDelete, emitDeviceStatus, emitDeviceUpdate } from "@/domains/device/events.js";
 import { verifyDeviceOwnerOrThrow, wakeDevice } from "./model.js";
 class HTTPController {
     static async createDevice(req, res) {

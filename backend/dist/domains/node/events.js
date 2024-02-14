@@ -1,5 +1,5 @@
-import io from "../../config/server/websocket.js";
-import { getUserRoom } from "../../helpers/websocket-rooms.js";
+import io from "@/config/server/websocket.js";
+import { getUserRoom } from "@/helpers/websocket-rooms.js";
 export function emitNodeUpdate(userOrId, node) {
     io.of("/web").to(getUserRoom(userOrId)).emit("node:update", node);
 }

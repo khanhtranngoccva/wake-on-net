@@ -1,4 +1,4 @@
-import { AlreadySignedInError, NoCredentialsError } from "../helpers/errors.js";
+import { AlreadySignedInError, NoCredentialsError } from "@/helpers/errors.js";
 export const requireUserAuthenticationState = function (param) {
     return function decorator(target, propertyKey, descriptor) {
         let method = descriptor.value;

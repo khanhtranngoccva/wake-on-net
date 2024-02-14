@@ -1,4 +1,4 @@
-import { getIdOfEntity } from "../helpers/db-entity.js";
+import { getIdOfEntity } from "@/helpers/db-entity.js";
 export function getNodeRoom(nodeOrId) {
     return `node_${getIdOfEntity(nodeOrId)}`;
 }

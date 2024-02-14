@@ -1,7 +1,7 @@
-import prisma from "../../helpers/prisma.js";
-import { getIdOfEntity } from "../../helpers/db-entity.js";
-import { AuthorizationError } from "../../helpers/errors.js";
-import { emitDeviceWake } from "../../domains/device/events.js";
+import prisma from "@/helpers/prisma.js";
+import { getIdOfEntity } from "@/helpers/db-entity.js";
+import { AuthorizationError } from "@/helpers/errors.js";
+import { emitDeviceWake } from "@/domains/device/events.js";
 export async function createDevice(nodeOrId, params) {
     return prisma.device.create({
         data: {

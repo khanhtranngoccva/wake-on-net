@@ -8,15 +8,15 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 import express from "express";
-import { createTotp, verifyTotpOrThrow } from "../../domains/totp/logic.js";
-import * as logic from "../../domains/node/model.js";
-import { getNodeOnlineStatus, getUserNodes, loginNode, updateDeviceList, verifyNodeOwnerOrThrow } from "../../domains/node/model.js";
+import { createTotp, verifyTotpOrThrow } from "@/domains/totp/logic.js";
+import * as logic from "@/domains/node/model.js";
+import { getNodeOnlineStatus, getUserNodes, loginNode, updateDeviceList, verifyNodeOwnerOrThrow } from "@/domains/node/model.js";
 import { z } from "zod";
-import { requireUserAuthenticationState } from "../../middleware/authenticate.js";
-import { BadRequestError, ResourceUnboundError } from "../../helpers/errors.js";
-import { getNodeRoom, getUserRoom } from "../../helpers/websocket-rooms.js";
-import { emitNodeAdd, emitNodeDelete, emitNodeStatuses, emitNodeUpdate } from "../../domains/node/events.js";
-import { emitDeviceAdd } from "../../domains/device/events.js";
+import { requireUserAuthenticationState } from "@/middleware/authenticate.js";
+import { BadRequestError, ResourceUnboundError } from "@/helpers/errors.js";
+import { getNodeRoom, getUserRoom } from "@/helpers/websocket-rooms.js";
+import { emitNodeAdd, emitNodeDelete, emitNodeStatuses, emitNodeUpdate } from "@/domains/node/events.js";
+import { emitDeviceAdd } from "@/domains/device/events.js";
 class HTTPController {
     static async registerNode(req, res) {
         const totp = await createTotp();

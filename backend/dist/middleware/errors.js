@@ -1,5 +1,5 @@
 import * as console from "console";
-import { CustomError } from "../helpers/errors.js";
+import { CustomError } from "@/helpers/errors.js";
 import { ZodError } from "zod";
 export default function enableErrorHandling(app) {
     app.use(async (err, req, res, next) => {

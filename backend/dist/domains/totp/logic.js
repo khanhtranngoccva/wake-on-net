@@ -1,7 +1,7 @@
-import prisma from "../../helpers/prisma.js";
+import prisma from "@/helpers/prisma.js";
 import * as crypto from "crypto";
 import { TOTP } from "totp-generator";
-import { InvalidCredentialsError } from "../../helpers/errors.js";
+import { InvalidCredentialsError } from "@/helpers/errors.js";
 import base32Encode from "base32-encode";
 export async function createTotp() {
     return prisma.totp.create({

@@ -1,7 +1,7 @@
-import NodeController from "../../domains/node/controllers.js";
-import { enableWebsocketAuth } from "../../config/passport/index.js";
-import { AuthenticationError } from "../../helpers/errors.js";
-import { createWSControllerWrapper } from "../../middleware/websocket.js";
+import NodeController from "@/domains/node/controllers.js";
+import { enableWebsocketAuth } from "@/config/passport/index.js";
+import { AuthenticationError } from "@/helpers/errors.js";
+import { createWSControllerWrapper } from "@/middleware/websocket.js";
 export default function websocketWebRoutes(io) {
     let namespace;
     namespace = io.of("/web");

@@ -1,15 +1,15 @@
-import app from "./config/server/app.js";
-import server from "./config/server/http.js";
-import io from "./config/server/websocket.js";
-import enableErrorHandling from "./middleware/errors.js";
-import webRouter from "./routes/http/web/index.js";
-import envHelper from "./helpers/env-helper.js";
+import app from "@/config/server/app.js";
+import server from "@/config/server/http.js";
+import io from "@/config/server/websocket.js";
+import enableErrorHandling from "@/middleware/errors.js";
+import webRouter from "@/routes/http/web/index.js";
+import envHelper from "@/helpers/env-helper.js";
 import { z } from "zod";
-import enableWebsocketErrorHandling from "./middleware/websocket.js";
-import nodeRouter from "./routes/http/node/index.js";
+import enableWebsocketErrorHandling from "@/middleware/websocket.js";
+import nodeRouter from "@/routes/http/node/index.js";
 import console from "console";
-import websocketNodeRoutes from "./routes/websocket/node.js";
-import websocketWebRoutes from "./routes/websocket/web.js";
+import websocketNodeRoutes from "@/routes/websocket/node.js";
+import websocketWebRoutes from "@/routes/websocket/web.js";
 // Express HTTP logic.
 app.use("/web", webRouter);
 app.use("/node", nodeRouter);

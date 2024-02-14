@@ -1,9 +1,9 @@
 import "express-async-errors";
 import express from "express";
-import enablePassportAuth from "../../config/passport/index.js";
-import envHelper from "../../helpers/env-helper.js";
+import enablePassportAuth from "@/config/passport/index.js";
+import envHelper from "@/helpers/env-helper.js";
 import cors from "cors";
-import { enableStandardResponse } from "../../middleware/response.js";
+import { enableStandardResponse } from "@/middleware/response.js";
 const app = express();
 app.set("trust proxy", true);
 enableStandardResponse(app);

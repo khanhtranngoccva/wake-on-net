@@ -1,4 +1,4 @@
-import { CustomError } from "../helpers/errors.js";
+import { CustomError } from "@/helpers/errors.js";
 import console from "console";
 import { ZodError } from "zod";
 export class WebsocketResponse {

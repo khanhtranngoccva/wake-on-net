@@ -1,5 +1,5 @@
-import io from "../../config/server/websocket.js";
-import { getNodeRoom, getUserRoom } from "../../helpers/websocket-rooms.js";
+import io from "@/config/server/websocket.js";
+import { getNodeRoom, getUserRoom } from "@/helpers/websocket-rooms.js";
 export function emitDeviceAdd(userOrId, device) {
     io.of("/web").to(getUserRoom(userOrId)).emit("device:add", device);
 }

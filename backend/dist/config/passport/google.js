@@ -1,6 +1,6 @@
 import { Strategy } from "passport-google-oauth20";
-import envHelper from "../../helpers/env-helper.js";
-import prisma from "../../helpers/prisma.js";
+import envHelper from "@/helpers/env-helper.js";
+import prisma from "@/helpers/prisma.js";
 async function callback(accessToken, refreshToken, params, profile, done) {
     try {
         const email = profile.emails[0]?.value;
