@@ -5,7 +5,12 @@ services:
       context: backend
       dockerfile: Dockerfile
     working_dir: "/var/application"
-    stdin_open: true
+    # Synchronize prisma dev invocations to source code
+    volumes:
+      - "./backend/prisma:/var/application/prisma"
+    depends_on:
+      postgresql:
+        condition: service_healthy
     ports:
       - "4000:80"
     command: [ "npm", "run", "dev" ]
@@ -28,7 +33,6 @@ services:
     working_dir: "/var/application"
     ports:
       - "3000:80"
-    stdin_open: true
     command: [ "npm", "run", "dev" ]
     networks:
       - primary-network
@@ -49,13 +53,16 @@ services:
     ports:
       - "8888:5432"
     restart: "on-failure"
-    stdin_open: true
     networks:
       - primary-network
     environment:
       POSTGRES_USER: wake-on-net
       POSTGRES_PASSWORD: wake-on-net
       POSTGRES_DATABASE: wake-on-net
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U wake-on-net"]
+      interval: 2s
+      timeout: 2s
   node-backend:
     build:
       context: node-backend

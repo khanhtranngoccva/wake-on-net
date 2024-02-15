@@ -1,6 +1,7 @@
 import {Socket} from "socket.io-client";
 import console from "console";
 import ping from "ping";
+import wol from "wake_on_lan";
 
 export async function routes(socket: Socket) {
   let deviceList: Map<string, Application.Device> = new Map();
@@ -31,6 +32,9 @@ export async function routes(socket: Socket) {
   socket.on("device:wake", (id: string) => {
     if (!deviceList.has(id)) return;
     // Do wake-on-lan here.
+    wol.wake(deviceList.get(id)!.macAddress, error => {
+      pingDevices();
+    });
   });
   socket.on("disconnect", () => {
     clearInterval(pingInterval);

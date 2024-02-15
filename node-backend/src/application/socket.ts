@@ -41,6 +41,7 @@ class NodeSocket {
         this.#reconnect().then();
       } else {
         console.error(e);
+        this.#reconnect().then();
       }
     });
     this.#socket.on("connect", () => {
