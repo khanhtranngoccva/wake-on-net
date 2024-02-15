@@ -7,7 +7,7 @@ const webAuthRouter = express.Router();
 
 webAuthRouter.get("/google", passport.authenticate("google"));
 webAuthRouter.get("/google/callback", passport.authenticate("google", {
-  successRedirect: "/web-login"
+  successRedirect: "/web/auth/web-login"
 }));
 webAuthRouter.get("/logout", AuthController.http.signOut);
 webAuthRouter.get("/current-user", AuthController.http.getCurrentUser);
