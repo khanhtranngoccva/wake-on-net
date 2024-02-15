@@ -17,6 +17,7 @@ let sessionMiddleware = session({
   resave: false,
   cookie: {
     sameSite: "strict",
+    domain: envHelper.get("FRONTEND_URL"),
   },
   store: new PrismaSessionStore(prisma, {})
 });
