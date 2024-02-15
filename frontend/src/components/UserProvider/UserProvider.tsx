@@ -22,8 +22,8 @@ function UserProvider(props: {
 
   React.useEffect(() => {
     async function getUser() {
-      console.log("Updating user.");
       const user = (await clientApi.get<Api.Response<Application.User>>("/web/auth/current-user")).data.data;
+      console.log(user);
       setUser(user);
       setLoaded(true);
     }
