@@ -11,5 +11,6 @@ webAuthRouter.get("/google/callback", passport.authenticate("google", {
 }));
 webAuthRouter.get("/logout", AuthController.http.signOut);
 webAuthRouter.get("/current-user", AuthController.http.getCurrentUser);
+webAuthRouter.get("/web-login", AuthController.http.webLogin);
 
 export default webAuthRouter;

@@ -9,25 +9,40 @@ import google from "@/config/passport/google.js";
 import {wrapExpressMiddleware} from "@/middleware/websocket.js";
 import {Namespace, Server} from "socket.io";
 
-
+export const SESSION_COOKIE_NAME = "connect.sid";
 let secret = z.string().min(8).parse(envHelper.get("SESSION_SECRET"));
-let sessionMiddleware = session({
+
+// Sessions that handle two different domains - one on the frontend and one for direct access for auth.
+let frontendSessionMiddleware = session({
   saveUninitialized: false,
   secret: secret,
   resave: false,
   cookie: {
     sameSite: "strict",
-    domain: envHelper.get("FRONTEND_URL"),
+    domain: new URL(envHelper.get("FRONTEND_URL")).hostname,
   },
+  name: SESSION_COOKIE_NAME,
   store: new PrismaSessionStore(prisma, {})
 });
+let httpSessionMiddleware = session({
+  saveUninitialized: false,
+  secret: secret,
+  resave: false,
+  cookie: {
+    sameSite: "strict",
+  },
+  name: SESSION_COOKIE_NAME,
+  store: new PrismaSessionStore(prisma, {})
+});
+
 const initializeUserField = (req: express.Request, res: express.Response, next: express.NextFunction) => {
   req.user = null;
   next();
 }
 
 export default function enablePassportAuth(app: Express) {
-  app.use(sessionMiddleware);
+  app.use(frontendSessionMiddleware);
+  app.use(httpSessionMiddleware);
   app.use(initializeUserField);
   app.use(passport.initialize());
   app.use(passport.session());
@@ -44,8 +59,9 @@ export default function enablePassportAuth(app: Express) {
   });
 }
 
-export function enableWebsocketAuth(ns: Namespace|Server) {
-  ns.use(wrapExpressMiddleware(sessionMiddleware));
+export function enableWebsocketAuth(ns: Namespace | Server) {
+  ns.use(wrapExpressMiddleware(httpSessionMiddleware));
+  ns.use(wrapExpressMiddleware(frontendSessionMiddleware));
   ns.use(wrapExpressMiddleware(initializeUserField));
   ns.use(wrapExpressMiddleware(passport.initialize()));
   ns.use(wrapExpressMiddleware(passport.session()));
